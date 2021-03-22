@@ -15,7 +15,23 @@ soup = BeautifulSoup(page.text, "html.parser")
 
 # teg_a_res = soup.findAll('ul')
 # print(teg_a_res)
-
+f = open("words.txt", "w")
 soup = soup.find_all("ul")
 for i in soup:
-    print(i.text)
+    # print(i.text)
+    if i.text == "":
+        break
+    f.write(i.text + "\n")
+
+
+with open('words.txt', 'r') as f:
+    nums = f.read().splitlines()
+x = nums[2:-3]
+
+for i in x:
+    print(i)
+dict_res={}
+print(dict_res.get('A'))
+for i in x:
+    symbol = i[0]
+    print(symbol)
