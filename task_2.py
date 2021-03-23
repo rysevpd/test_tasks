@@ -1,6 +1,6 @@
-import requests
 from bs4 import BeautifulSoup
-
+import requests
+import os
 
 """
 Сначала получаем html первой страницы.
@@ -8,11 +8,14 @@ from bs4 import BeautifulSoup
 Как только доходим до последней страницы - скрипт останавливается.
 """
 
+
 def get_count(url, dict_res):
     """
     Данная функция получает на вход url страницы для парсинга, а также словарь с итоговым списком.
-    Сначала она получает и заносит в txt список животных, после чего проходит и в соответсвии в 
+    Сначала она получает и заносит в txt список животных, после чего проходит по нему и в соответствии c первой
+    буквой увеличивает значение в нужного ключа в словаре.
     """
+
     page = requests.get(url)
     soup = BeautifulSoup(page.text, "html.parser")
     f = open("words.txt", "w")
@@ -22,14 +25,13 @@ def get_count(url, dict_res):
             break
         f.write(i.text + "\n")
 
-
     with open('words.txt', 'r') as f:
         nums = f.read().splitlines()
     x = nums[2:-3]
-    
+
     for i in x:
         symbol = i[0]
-        if dict_res.get(symbol) == None:
+        if dict_res.get(symbol) is None:
             dict_res[symbol] = 1
         else:
             ch = dict_res.get(symbol) + 1
@@ -37,33 +39,30 @@ def get_count(url, dict_res):
             dict_res.update(x)
     return dict_res
 
+
 url_start = ("https://ru.wikipedia.org/wiki/%D0%9A%D0%B0%D1%82%D0%B5%D0%B3%D0%BE%D1%80%D0%B8%D1%8F:%D0%96%D0%B8%D0%B2" \
              "%D0%BE%D1%82%D0%BD%D1%8B%D0%B5_%D0%BF%D0%BE_%D0%B0%D0%BB%D1%84%D0%B0%D0%B2%D0%B8%D1%82%D1%83")
 url_begin = "https://ru.wikipedia.org"
 
-dict_res={}
+dict_res = {}
 dict_res = get_count(url_start, dict_res)
-# dict_result_sum.update(x)
+
 page = requests.get(url_start)
 soup = BeautifulSoup(page.text, "html.parser")
 teg_a_res = soup.findAll('a')
-page_num = 1  # для теста
+
 for data in teg_a_res:
     if data.text == "Следующая страница":
         result = data.get("href")
         break
 
 while result != 0:
-    print("страница ", page_num)
     url = url_begin + result
     result = 0
-    page_num += 1  # для теста
+
     page = requests.get(url)
     soup = BeautifulSoup(page.text, "html.parser")
-    
     dict_res = get_count(url, dict_res)
-    #dict_result_sum.update(x)
-
     teg_a_res = soup.findAll('a')
 
     for data in teg_a_res:
@@ -71,8 +70,6 @@ while result != 0:
             result = data.get("href")
             break
 
-
-print(dict_res)
-
+os.remove(' тут в кавычках как строку , пишем путь к файлу ')
 for k in sorted(dict_res.keys()):
-    print (k, ':', dict_res[k])
+    print(k, ':', dict_res[k])
